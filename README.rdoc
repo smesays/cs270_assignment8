@@ -3,7 +3,7 @@
 In this assignment, you'll create associations between the models that are
 necessary for the app to function.
 
-Step 1 - create the Event-Location associations
+<b>Step 1 - create the Event-Location associations</b>
 
 This relationship is a many-to-many relationship, and we'll accomplish this by
 creating a Rails <tt>has_and_belongs_to_many</tt> association.
@@ -18,7 +18,7 @@ Location model files.
 * edit the Event model to read <tt>has_and_belongs_to_many :locations</tt>
 * edit the Location model to read <tt>has_and_belongs_to_many :events</tt>
 
-Step 2 - create the Event-User associations
+<b>Step 2 - create the Event-User associations</b>
 
 Recall from the E-R diagram that there are actually two separate relationships
 between events and users: one for participants and another for owners.  The
@@ -50,7 +50,7 @@ for the event owner.
   - we want to be able to say <tt>@user.owned_events</tt>, so make sure to specify
     the appropriate options here
 
-Step 3 - create the Location-User associations
+<b>Step 3 - create the Location-User associations</b>
 
 Recall from the E-R diagram that there are actually two separate relationships
 between locations and users: one for visiting a location and another for owners.  The
