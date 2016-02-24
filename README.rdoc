@@ -1,37 +1,83 @@
-== CS 270 Assignment 3
+== CS 270 Assignment 4
 
-In this assignment, you'll create the models and database migrations 
-necessary to form the core of the application.
+In this assignment, you'll create associations between the models that are
+necessary for the app to function.
 
-Step 1 - create the User model
+Step 1 - create the Event-Location associations
 
-* create a file in the app/models directory named 'user.rb'
-* create a User class in the new model file that inherits from 
-  ActiveRecord::Base
-* create a migration from the command line using the following command: 
-  'rails g migration create_users'
-* edit the migration to ensure the users table has columns for 
-  first_name, last_name, email, password_hash, and password_salt
-* run the migration from the command line by typing 'rake db:migrate'
+This relationship is a many-to-many relationship, and we'll accomplish this by
+creating a Rails <tt>has_and_belongs_to_many</tt> association.
 
-Step 2 - create the Event model
+In order to do this, we'll have to create a join table and update the Event and
+Location model files.
 
-* create a file in the app/models directory named 'event.rb'
-* create an Event class in the new model file that inherits from 
-  ActiveRecord::Base
-* create a migration from the command line using the following command: 
-  'rails g migration create_events'
-* edit the migration to ensure the events table has columns for 
-  name, description, start_date, end_date
-* run the migration from the command line by typing 'rake db:migrate'
+* create a migration for the join table using the following command:
+  <tt>rails g migration create_events_locations</tt>
+* add the appropriate <tt>t.belongs_to</tt> references inside the migration
+* migrate the database using <tt>rake db:migrate</tt>
+* edit the Event model to read <tt>has_and_belongs_to_many :locations</tt>
+* edit the Location model to read <tt>has_and_belongs_to_many :events</tt>
 
-Step 3 - create the Location model
+Step 2 - create the Event-User associations
 
-* create a file in the app/models directory named 'location.rb'
-* create an Location class in the new model file that inherits from 
-  ActiveRecord::Base
-* create a migration from the command line using the following command: 
-  'rails g migration create_locations'
-* edit the migration to ensure the locations table has columns for 
-  name, description, tag, coordinates
-* run the migration from the command line by typing 'rake db:migrate'
+Recall from the E-R diagram that there are actually two separate relationships
+between events and users: one for participants and another for owners.  The
+participants relationship will be many-to-many with a join table and a Rails
+<tt>has_and_belongs_to_many</tt> association, and the owner relationship will
+be one-to-many using a Rails <tt>has_many/belongs_to</tt> association.
+
+* create a migration for the join table using the following command:
+  <tt>rails g migration create_events_users</tt>
+* add the appropriate <tt>t.belongs_to</tt> references inside the migration
+* migrate the database using <tt>rake db:migrate</tt>
+* edit the Event model to read <tt>has_and_belongs_to_many :users</tt>
+  - remember to specify the appropriate join table
+  - later, we want to be able to say something like <tt>@event.participants</tt>,
+    so make sure to specify the appropriate options for the association
+* edit the User model to read <tt>has_and_belongs_to_many :events</tt>
+  - remember to specify the appropriate join table
+  - later, we want to be able to say something like <tt>@user.participating_events</tt>,
+    so make sure eto specify the appropriate options for the association
+
+So far, this sets up the <tt>has_and_belongs_to_many</tt> association for event
+participants.  Now, we want to set up the <tt>has_many/belongs_to</tt> association
+for the event owner.
+
+* edit the Event model to read <tt>belongs_to :users</tt>
+  - we want to be able to say <tt>@event.owner</tt>, so make sure to specify the
+    appropriate options here
+* edit the User model to read <tt>has_many :events</tt>
+  - we want to be able to say <tt>@user.owned_events</tt>, so make sure to specify
+    the appropriate options here
+
+Step 3 - create the Location-User associations
+
+Recall from the E-R diagram that there are actually two separate relationships
+between locations and users: one for visiting a location and another for owners.  The
+visitors relationship will be many-to-many with a join table and a Rails
+<tt>has_and_belongs_to_many</tt> association, and the owner relationship will
+be one-to-many using a Rails <tt>has_many/belongs_to</tt> association.
+
+* create a migration for the join table using the following command:
+  <tt>rails g migration create_locations_users</tt>
+* add the appropriate <tt>t.belongs_to</tt> references inside the migration
+* migrate the database using <tt>rake db:migrate</tt>
+* edit the Location model to read <tt>has_and_belongs_to_many :users</tt>
+  - remember to specify the appropriate join table
+  - we want to be able to say something like <tt>@location.visitors</tt>,
+    so make sure to specify the appropriate options for the association
+* edit the User model to read <tt>has_and_belongs_to_many :locations</tt>
+  - remember to specify the appropriate join table
+  - we want to be able to say something like <tt>@user.visited_locations</tt>,
+    so make sure eto specify the appropriate options for the association
+
+So far, this sets up the <tt>has_and_belongs_to_many</tt> association for location
+visitors.  Now, we want to set up the <tt>has_many/belongs_to</tt> association
+for the location owner.
+
+* edit the Location model to read <tt>belongs_to :users</tt>
+  - we want to be able to say <tt>@location.owner</tt>, so make sure to specify the
+    appropriate options here
+* edit the User model to read <tt>has_many :locations</tt>
+  - we want to be able to say <tt>@user.owned_locations</tt>, so make sure to specify
+    the appropriate options here

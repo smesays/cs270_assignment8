@@ -2,11 +2,18 @@ require 'test_helper'
 
 class LocationTest < ActiveSupport::TestCase
     test 'can create new location' do
-        Location.create(
+        user = users(:user1)
+
+        location = Location.new(
             name: 'New Location',
             description: 'This is a new location.'
         )
         
-        assert_not Location.all.empty?
+        assert location.save
+
+        location.owner = user 
+        
+        assert location.owner == user
+        assert user.owned_locations.include? location
     end
 end
