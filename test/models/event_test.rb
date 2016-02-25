@@ -15,6 +15,7 @@ class EventTest < ActiveSupport::TestCase
         
         event.owner = user
         
+        assert event.save
         assert event.owner == user
         assert user.owned_events.include? event
     end

@@ -18,66 +18,48 @@ Location model files.
 * edit the Event model to read <tt>has_and_belongs_to_many :locations</tt>
 * edit the Location model to read <tt>has_and_belongs_to_many :events</tt>
 
-<b>Step 2 - create the Event-User associations</b>
-
-Recall from the E-R diagram that there are actually two separate relationships
-between events and users: one for participants and another for owners.  The
-participants relationship will be many-to-many with a join table and a Rails
-<tt>has_and_belongs_to_many</tt> association, and the owner relationship will
-be one-to-many using a Rails <tt>has_many/belongs_to</tt> association.
-
-* create a migration for the join table using the following command:
-  <tt>rails g migration create_events_users</tt>
-* add the appropriate <tt>t.belongs_to</tt> references inside the migration
-* migrate the database using <tt>rake db:migrate</tt>
-* edit the Event model to read <tt>has_and_belongs_to_many :users</tt>
-  - remember to specify the appropriate join table
-  - later, we want to be able to say something like <tt>@event.participants</tt>,
-    so make sure to specify the appropriate options for the association
-* edit the User model to read <tt>has_and_belongs_to_many :events</tt>
-  - remember to specify the appropriate join table
-  - later, we want to be able to say something like <tt>@user.participating_events</tt>,
-    so make sure eto specify the appropriate options for the association
-
-So far, this sets up the <tt>has_and_belongs_to_many</tt> association for event
-participants.  Now, we want to set up the <tt>has_many/belongs_to</tt> association
-for the event owner.
-
-* edit the Event model to read <tt>belongs_to :users</tt>
-  - we want to be able to say <tt>@event.owner</tt>, so make sure to specify the
-    appropriate options here
-* edit the User model to read <tt>has_many :events</tt>
-  - we want to be able to say <tt>@user.owned_events</tt>, so make sure to specify
-    the appropriate options here
-
-<b>Step 3 - create the Location-User associations</b>
+<b>Step 2 - create the Location-User associations</b>
 
 Recall from the E-R diagram that there are actually two separate relationships
 between locations and users: one for visiting a location and another for owners.  The
-visitors relationship will be many-to-many with a join table and a Rails
-<tt>has_and_belongs_to_many</tt> association, and the owner relationship will
+visitors relationship will be many-to-many with a Visit join model and a Rails
+<tt>has_many :through</tt> association, and the owner relationship will
 be one-to-many using a Rails <tt>has_many/belongs_to</tt> association.
 
-* create a migration for the join table using the following command:
-  <tt>rails g migration create_locations_users</tt>
-* add the appropriate <tt>t.belongs_to</tt> references inside the migration
-* migrate the database using <tt>rake db:migrate</tt>
-* edit the Location model to read <tt>has_and_belongs_to_many :users</tt>
-  - remember to specify the appropriate join table
-  - we want to be able to say something like <tt>@location.visitors</tt>,
-    so make sure to specify the appropriate options for the association
-* edit the User model to read <tt>has_and_belongs_to_many :locations</tt>
-  - remember to specify the appropriate join table
-  - we want to be able to say something like <tt>@user.visited_locations</tt>,
-    so make sure eto specify the appropriate options for the association
-
-So far, this sets up the <tt>has_and_belongs_to_many</tt> association for location
+* create a migration for the join model using the following command:
+  <tt>rails g migration create_visits</tt>
+* add the appropriate <tt>t.belongs_to</tt> references inside the migration, and
+  migrate the database using <tt>rake db:migrate</tt>. Remember to include <tt>t.timestamps null: false</tt>
+* create the Visit model, and add the appropriate <tt>belongs_to</tt> associations
+* edit the Location model to include the following associations 
+  - <tt>has_many :visits</tt>
+  - <tt>has_many :visitors, through: :visits, source: 'User'</tt>
+  - we want to be able to type <tt>@location.visitors</tt>, which is we have to 
+    provide the additional options to the <tt>has_many :through</tt> association
+* edit the User model to in the same way to account for its portion of the association
+  
+So far, this sets up the <tt>has_many :through</tt> association for location
 visitors.  Now, we want to set up the <tt>has_many/belongs_to</tt> association
 for the location owner.
 
-* edit the Location model to read <tt>belongs_to :users</tt>
+* edit the Location model to read <tt>belongs_to :owner, class_name: 'User', foreign_key: 'user_id'</tt>
   - we want to be able to say <tt>@location.owner</tt>, so make sure to specify the
     appropriate options here
-* edit the User model to read <tt>has_many :locations</tt>
+* update the locations migration to include a <tt>t.belongs_to</tt> reference to 
+  the users table.
+* edit the User model to read <tt>has_many :owned_locations, class_name: 'Location'</tt>
   - we want to be able to say <tt>@user.owned_locations</tt>, so make sure to specify
     the appropriate options here
+
+<b>Step 3 - create the Event-User associations</b>
+
+The events-to-users associations are in much the same manner. We must account for
+both participants as well as the event owner.both
+
+* For the participants, use a join model called Participate.
+  - this means you'll need to create a migration for a table called <tt>participates</tt>
+* When you are finished, you should be able to type:
+  - <tt>@event.owner # => returns the owner as a User object</tt>
+  - <tt>@event.participants # => returns a list of participating users</tt>
+  - <tt>@user.owned_events # => returns a list of events owned by the user</tt>
+  - <tt>@user.participating_events # => returns a list of events that the user is participating in</tt>

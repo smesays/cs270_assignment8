@@ -18,7 +18,7 @@ class UserTest < ActiveSupport::TestCase
         event.participants << user
         
         assert event.participants.include? user
-        assert user.participanting_events.include? event
+        assert user.participating_events.include? event
     end
     
     test 'can visit a location' do

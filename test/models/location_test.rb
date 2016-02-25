@@ -13,6 +13,7 @@ class LocationTest < ActiveSupport::TestCase
 
         location.owner = user 
         
+        assert location.save
         assert location.owner == user
         assert user.owned_locations.include? location
     end
