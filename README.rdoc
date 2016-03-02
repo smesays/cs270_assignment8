@@ -63,6 +63,7 @@ file.
 For example, for the events controller, we would define:
 
 <tt>class EventsController < ApplicationController</tt>
+
 <tt>end</tt>
 
 Again, pay attention to the plural/camel-case conventions used by Rails!
@@ -75,6 +76,7 @@ example, for the route mapped to 'events#show_all_events', we need to define a m
 in the events controller as follows:
 
 <tt>def show_all_events</tt>
+
 <tt>end</tt>
 
 In the next phase, we'll go back and write code to make the controllers actually do
