@@ -33,7 +33,13 @@ We want to create routes to handle the following tasks (for each model):
 
 We can lay out our routes as a conceptual table, like this:
 
-<tt>REQUEST METHOD     URL          CONTROLLER/ACTION</tt>
+<table>
+<tr>
+<th>REQUEST METHOD</th>
+<th>URL</th>
+<th>CONTROLLER/ACTION</th>
+</tr>
+</table>
 
 <tt>--------------     ---          -----------------</tt>
 
