@@ -33,13 +33,15 @@ We want to create routes to handle the following tasks (for each model):
 
 We can lay out our routes as a conceptual table, like this:
 
+<tt>
 REQUEST METHOD     URL          CONTROLLER/ACTION
 --------------     ---          -----------------
 GET                '/events'    events#show_all_events
 GET                '/event/:id' events#show_event
 POST               '/event/new' events#create_events
                    ...
-                   
+<tt>
+
 For three models (events, locations, and users), we have 5 tasks, so we need to
 define 15 routes in our routes file.define
 
