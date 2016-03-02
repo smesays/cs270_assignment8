@@ -1,65 +1,76 @@
-== CS 270 Assignment 4
+== CS 270 Assignment 5
 
-In this assignment, you'll create associations between the models that are
-necessary for the app to function.
+At this point, we should have the basics of our model functionality to start
+using in the controllers and views.  Thus, in this assignment, we will start to
+setup our app controllers and views.
 
-<b>Step 1 - create the Event-Location associations</b>
+<b>Step 1 - Update <tt>config/routes.rb</tt></b>
 
-This relationship is a many-to-many relationship, and we'll accomplish this by
-creating a Rails <tt>has_and_belongs_to_many</tt> association.
+We need a way to handle each specific incoming HTTP request.  Recall from our
+discussion on MVC, each request comes into and is handled by a controller.  Thus,
+we need to map each request to a specific controller/action.
 
-In order to do this, we'll have to create a join table and update the Event and
-Location model files.
+Rails accomplishes this mapping in the <tt>config/routes.rb</tt> file.  In that 
+file we can assign the root URL as well as map individual requests to controller/action
+pairs.
 
-* create a migration for the join table using the following command:
-  <tt>rails g migration create_events_locations</tt>
-* add the appropriate <tt>t.belongs_to</tt> references inside the migration
-* migrate the database using <tt>rake db:migrate</tt>
-* edit the Event model to read <tt>has_and_belongs_to_many :locations</tt>
-* edit the Location model to read <tt>has_and_belongs_to_many :events</tt>
+A route in Rails consists of three parts: 
 
-<b>Step 2 - create the Location-User associations</b>
+* an HTTP request method
+* a URL
+* a controller/action pair
 
-Recall from the E-R diagram that there are actually two separate relationships
-between locations and users: one for visiting a location and another for owners.  The
-visitors relationship will be many-to-many with a Visit join model and a Rails
-<tt>has_many :through</tt> association, and the owner relationship will
-be one-to-many using a Rails <tt>has_many/belongs_to</tt> association.
+The format for defining a route is indicated in the comment section of the routes
+file.
 
-* create a migration for the join model using the following command:
-  <tt>rails g migration create_visits</tt>
-* add the appropriate <tt>t.belongs_to</tt> references inside the migration, and
-  migrate the database using <tt>rake db:migrate</tt>. Remember to include <tt>t.timestamps null: false</tt>
-* create the Visit model, and add the appropriate <tt>belongs_to</tt> associations
-* edit the Location model to include the following associations 
-  - <tt>has_many :visits</tt>
-  - <tt>has_many :visitors, through: :visits, source: 'User'</tt>
-  - we want to be able to type <tt>@location.visitors</tt>, which is we have to 
-    provide the additional options to the <tt>has_many :through</tt> association
-* edit the User model to in the same way to account for its portion of the association
-  
-So far, this sets up the <tt>has_many :through</tt> association for location
-visitors.  Now, we want to set up the <tt>has_many/belongs_to</tt> association
-for the location owner.
+We want to create routes to handle the following tasks (for each model):
 
-* edit the Location model to read <tt>belongs_to :owner, class_name: 'User', foreign_key: 'user_id'</tt>
-  - we want to be able to say <tt>@location.owner</tt>, so make sure to specify the
-    appropriate options here
-* update the locations migration to include a <tt>t.belongs_to</tt> reference to 
-  the users table.
-* edit the User model to read <tt>has_many :owned_locations, class_name: 'Location'</tt>
-  - we want to be able to say <tt>@user.owned_locations</tt>, so make sure to specify
-    the appropriate options here
+* create a new object (i.e., create an event)
+* view all objects (i.e., view all events)
+* view a single object (i.e., view a single event)
+* edit an object (i.e., edit a single event)
+* delete an object (i.e., delete a single event)
 
-<b>Step 3 - create the Event-User associations</b>
+We can lay out our routes as a conceptual table, like this:
 
-The events-to-users associations are in much the same manner. We must account for
-both participants as well as the event owner.both
+REQUEST METHOD     URL          CONTROLLER/ACTION
+--------------     ---          -----------------
+GET                '/events'    events#show_all_events
+GET                '/event/:id' events#show_event
+POST               '/event/new' events#create_events
+                   ...
+                   
+For three models (events, locations, and users), we have 5 tasks, so we need to
+define 15 routes in our routes file.define
 
-* For the participants, use a join model called Participate.
-  - this means you'll need to create a migration for a table called <tt>participates</tt>
-* When you are finished, you should be able to type:
-  - <tt>@event.owner # => returns the owner as a User object</tt>
-  - <tt>@event.participants # => returns a list of participating users</tt>
-  - <tt>@user.owned_events # => returns a list of events owned by the user</tt>
-  - <tt>@user.participating_events # => returns a list of events that the user is participating in</tt>
+<b>Step 2 - Create controllers</b>
+
+In order for our routes to work, we need to create controllers for each model.
+We do so by creating a file in the <tt>app/controllers</tt> directory for each controller.
+For example. to create the events controller, you would create a file named <tt>events_controller.rb</tt>
+
+Take note of the lower-case/underscore/plural conventions!
+
+What is a controller?  Like everything in Rails, it's an object, and that means 
+it's defined as a class.  So, we need to define a controller class inside of each controller
+file.
+
+For example, for the events controller, we would define:
+
+<tt>class EventsController < ApplicationController</tt>
+<tt>end</tt>
+
+Again, pay attention to the plural/camel-case conventions used by Rails!
+
+Then, after defining each controller, we need to populate the controllers with the
+appropriate methods, called 'actions' in Rails.
+
+We need a method for each controller action referenced in the routes file.  For
+example, for the route mapped to 'events#show_all_events', we need to define a method
+in the events controller as follows:
+
+<tt>def show_all_events</tt>
+<tt>end</tt>
+
+In the next phase, we'll go back and write code to make the controllers actually do
+some processing, but for now just define the routes and controllers.
