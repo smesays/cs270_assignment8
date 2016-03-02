@@ -1,8 +1,8 @@
 == CS 270 Assignment 5
 
-At this point, we should have the basics of our model functionality to start
-using in the controllers and views.  Thus, in this assignment, we will start to
-setup our app controllers and views.
+At this point, we should have the basics of our model functionality and can start
+using them in the controllers and views.  Thus, in this assignment, we will start 
+to setup our app controllers and views.
 
 <b>Step 1 - Update <tt>config/routes.rb</tt></b>
 
