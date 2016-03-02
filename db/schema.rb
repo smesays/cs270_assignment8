@@ -11,21 +11,45 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160223192307) do
+ActiveRecord::Schema.define(version: 20160225024417) do
 
   create_table "events", force: :cascade do |t|
     t.string   "name"
     t.string   "description"
     t.datetime "start_date"
     t.datetime "end_date"
+    t.integer  "user_id"
   end
 
-  create_table "locations", force: :cascade do |t|
-    t.string "name"
-    t.string "description"
-    t.string "tag"
-    t.string "coordinates"
+  add_index "events", ["user_id"], name: "index_events_on_user_id"
+
+  create_table "events_locations", id: false, force: :cascade do |t|
+    t.integer "event_id"
+    t.integer "location_id"
   end
+
+  add_index "events_locations", ["event_id"], name: "index_events_locations_on_event_id"
+  add_index "events_locations", ["location_id"], name: "index_events_locations_on_location_id"
+
+  create_table "locations", force: :cascade do |t|
+    t.string  "name"
+    t.string  "description"
+    t.string  "tag"
+    t.string  "coordinates"
+    t.integer "user_id"
+  end
+
+  add_index "locations", ["user_id"], name: "index_locations_on_user_id"
+
+  create_table "participates", force: :cascade do |t|
+    t.integer  "event_id"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "participates", ["event_id"], name: "index_participates_on_event_id"
+  add_index "participates", ["user_id"], name: "index_participates_on_user_id"
 
   create_table "users", force: :cascade do |t|
     t.string "first_name"
@@ -34,5 +58,15 @@ ActiveRecord::Schema.define(version: 20160223192307) do
     t.string "password_hash"
     t.string "password_salt"
   end
+
+  create_table "visits", force: :cascade do |t|
+    t.integer  "location_id"
+    t.integer  "user_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "visits", ["location_id"], name: "index_visits_on_location_id"
+  add_index "visits", ["user_id"], name: "index_visits_on_user_id"
 
 end
