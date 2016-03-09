@@ -2,22 +2,22 @@ require 'test_helper'
 
 class LocationsControllerTest < ActionController::TestCase
     test 'can view all locations' do
-        get '/locations'
+        get show_all_locations_path
         assert_response :success
     end
     
     test 'can view a single location' do
-        get '/locations/1'
+        get show_location_path(1)
         assert_response :success
     end
     
     test 'can edit a single location' do
-        post '/locations/1/edit'
+        get edit_location_path(1)
         assert_response :success
     end
     
     test 'can delete an location' do
-        delete '/locations/1/delete'
+        delete delete_location_path(1)
         assert_response :success
     end
 end

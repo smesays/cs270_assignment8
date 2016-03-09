@@ -2,22 +2,22 @@ require 'test_helper'
 
 class UsersControllerTest < ActionController::TestCase
     test 'can view all users' do
-        get '/users'
+        get show_all_users_path
         assert_response :success
     end
     
     test 'can view a single user' do
-        get '/users/1'
+        get show_user_path(1)
         assert_response :success
     end
     
     test 'can edit a single user' do
-        post '/users/1/edit'
+        get edit_user_path(1)
         assert_response :success
     end
     
     test 'can delete an user' do
-        delete '/users/1/delete'
+        delete delete_user_path(1)
         assert_response :success
     end
 end
