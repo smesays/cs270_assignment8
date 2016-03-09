@@ -35,7 +35,7 @@ After filling in the seeds.rb file, you can actually seed the database by runnin
 
 <tt>rake db:seed</tt>
 
-<b>Step 2 - Create the Views</tt>
+<b>Step 2 - Create the Views</b>
 
 Every route is mapped to a specific controller/action pair, and every controller/action
 pair must have either an associated view or redirect to a route that does.  Thus, we
@@ -52,7 +52,7 @@ there should be a show_all_events.html.erb file in app/views/events.
 
 Create a view file for each controller/action pair that is mapped to an HTTP GET request.
 
-<b>Step 3 - Fill in the Views</tt>
+<b>Step 3 - Fill in the Views</b>
 
 Now that you have the view files stubbed out, it's time to start making the models,
 controllers, and views work together to display information.  For now, we'll keep our views
