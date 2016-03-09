@@ -1,83 +1,86 @@
-== CS 270 Assignment 5
+== CS 270 Assignment 6
 
-At this point, we should have the basics of our model functionality and can start
-using them in the controllers and views.  Thus, in this assignment, we will start 
-to setup our app controllers and views.
+In this assignment, we'll now make use of the model associations and controllers
+to start incorporating some business logic into the app.  We'll be dealing with 
+not only the logic to code up in the controllers and models, but we'll also need
+to start building the views to be rendered in this phase.
 
-<b>Step 1 - Update <tt>config/routes.rb</tt></b>
+<b>Step 1 - Seed the Database</b>
 
-We need a way to handle each specific incoming HTTP request.  Recall from our
-discussion on MVC, each request comes into and is handled by a controller.  Thus,
-we need to map each request to a specific controller/action.
+It would be nice to have some actual data to play with and see when we fire up the
+Rails development server, and in order to do that we can seed the database with some
+initial data.
 
-Rails accomplishes this mapping in the <tt>config/routes.rb</tt> file.  In that 
-file we can assign the root URL as well as map individual requests to controller/action
-pairs.
+This script lives in the db directory in seeds.rb.  In the seeds.rb file, we can
+create some initial data to be loaded into the database as well as create some
+sample associations.  By having you go through and populate the seeds file with some
+initial data, this will also start getting you used to using the associations we
+previously built.
 
-A route in Rails consists of three parts: 
+You must create two events, two locations, and two users.  You can create these by
+utilizing the create method that comes with every model.  For example, to create
+an event:
 
-* an HTTP request method
-* a URL
-* a controller/action pair
+<tt>Event.create(name: 'Event 1', description: 'Event 1', start_date: Date.today, end_date: Date.today + 7)</tt>
 
-The format for defining a route is indicated in the comment section of the routes
-file.
+Creates Events 1 that starts today and ends in 1 week.
 
-We want to create routes to handle the following tasks (for each model):
+After creating the above items, you must also associate them together in the following way:
 
-* create a new object (i.e., create an event)
-* view all objects (i.e., view all events)
-* view a single object (i.e., view a single event)
-* edit an object (i.e., edit a single event)
-* delete an object (i.e., delete a single event)
+* User 1 is the owner of Event 1 and Locations 1 and 2
+* Locations 1 and 2 belong to Event 1
+* User 2 is a participant of Event 1 and has already visited Location 1
 
-We can lay out our routes as a conceptual table, like this:
+After filling in the seeds.rb file, you can actually seed the database by running:
 
-<tt>REQUEST METHOD     URL          CONTROLLER/ACTION</tt>
+<tt>rake db:seed</tt>
 
-<tt>--------------     ---          -----------------</tt>
+<b>Step 2 - Create the Views</tt>
 
-<tt>GET                '/events'    events#show_all_events</tt>
+Every route is mapped to a specific controller/action pair, and every controller/action
+pair must have either an associated view or redirect to a route that does.  Thus, we
+need to create views for most controller/action pairs.
 
-<tt>GET                '/event/:id' events#show_event</tt>
+Views live in the app/views directory, and they are organized by subfolders according
+to controllers.  For instance, the views for the events controller would live in 
+the app/views/events directory.  Start by creating a directory for each controller
+that we built in the last phase (events, locations, users).
 
-<tt>POST               '/event/new' events#create_events</tt>
+Inside each view folder, there must be a corresponding .html.erb file for each action 
+in that controller.  For example, for the show_all_events in the events controller,
+there should be a show_all_events.html.erb file in app/views/events.  
 
-<tt>                   ...</tt>
+Create a view file for each controller/action pair that is mapped to an HTTP GET request.
 
-For three models (events, locations, and users), we have 5 tasks, so we need to
-define 15 routes in our routes file.define
+<b>Step 3 - Fill in the Views</tt>
 
-<b>Step 2 - Create controllers</b>
+Now that you have the view files stubbed out, it's time to start making the models,
+controllers, and views work together to display information.  For now, we'll keep our views
+basic.
 
-In order for our routes to work, we need to create controllers for each model.
-We do so by creating a file in the <tt>app/controllers</tt> directory for each controller.
-For example. to create the events controller, you would create a file named <tt>events_controller.rb</tt>
+Let's start with events.  First, we want to display a listing of all events.  In order
+to do this, we need to go to the controller/action pair that is mapped to the show_all_events_path:
+in other words, we need to fill in the show_all_events method in the events controller.
 
-Take note of the lower-case/underscore/plural conventions!
+We can easily grab a listing of all events by taking advantage of the built-in model methods
+that Rails provides for us.  For the show_all_events action, we simply need to create
+an instance variable, @events, and assign the list of all events to it, like this:
 
-What is a controller?  Like everything in Rails, it's an object, and that means 
-it's defined as a class.  So, we need to define a controller class inside of each controller
-file.
+<tt>@events = Event.all</tt>
 
-For example, for the events controller, we would define:
+Now, the @events variable is available for use in the corresponding view, show_all_events.html.erb,
+and we simply need to loop over the list of all events to display the event information
+for each event in some sort of html table.
 
-<tt>class EventsController < ApplicationController</tt>
+Likewise, to show a single event, we can use the model's built-in find method to grab
+a particular event by id (passed via the params hash):
 
-<tt>end</tt>
+<tt>@event = Event.find(params[:id])</tt>
 
-Again, pay attention to the plural/camel-case conventions used by Rails!
+And again, that variable becomes available for use in the corresponding show_event.html.erb file.
 
-Then, after defining each controller, we need to populate the controllers with the
-appropriate methods, called 'actions' in Rails.
+Fill in the view file for each GET request method as appropriate so that the correct information
+is displayed.  You can view your handiwork by firing up the Rails development server
+and visiting the various addresses you incorporated in the routes.rb file.
 
-We need a method for each controller action referenced in the routes file.  For
-example, for the route mapped to 'events#show_all_events', we need to define a method
-in the events controller as follows:
-
-<tt>def show_all_events</tt>
-
-<tt>end</tt>
-
-In the next phase, we'll go back and write code to make the controllers actually do
-some processing, but for now just define the routes and controllers.
+In the next phase, we'll start building the check-in pipeline...
