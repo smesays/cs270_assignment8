@@ -5,6 +5,7 @@ class UsersController < ApplicationController
     
     # GET /users
     def show_all_users
+        @users = User.all
     end
     
     # GET /users/:id
