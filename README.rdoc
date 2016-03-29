@@ -10,4 +10,4 @@ the app to function properly.
 
 <b>Step 3 - 'Edit' Actions</b>
 
-<b>Step 4 - 'Show One' Actions
+<b>Step 4 - 'Show One' Actions</b>
