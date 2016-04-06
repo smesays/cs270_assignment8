@@ -5,11 +5,17 @@
         <th>End</th>
     </tr>
     
-    <% @events.each do |e| %>
+    <% @events.each do |event| %>
         <tr>
-            <td><%= e.name %></td>
-            <td><%= e.start_date %></td>
-            <td><%= e.end_date %></td>
+            <td><%= event.name %></td>
+            <td><%= event.start_date %></td>
+            <td><%= event.end_date %></td>
+            <td><%= link_to 'show', show_event_path(event) %></td>
+            <td><%= link_to 'edit', edit_event_path(event) %></td>
+            <td><%= link_to 'delete', delete_event_path(event), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+
         </tr>
     <% end %>
 </table>
+
+<p><%= link_to 'Create New Event', new_event_path %></p>
