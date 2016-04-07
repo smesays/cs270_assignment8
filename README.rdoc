@@ -1,45 +1,58 @@
-== CS 270 Assignment 7
+== CS 270 Assignment 8
 
-In this assignment, we'll finish coding all the views except for the 'show location'
-action. In doing so, we'll complete the bulk of our business logic necessary for
-the app to function properly.
+In this assignment, we'll round out this project by creating the check-in pipeline
+for a user to scan a QR code and visit a particular location.
 
-<b>Step 1 - 'Create New' Actions</b>
+<b>Step 1 - Create tag for new locations</b>
 
-First, we need to split the creation process across two separate controller actions:
+Whenever we create a location, we need to generate a random tag for use later in
+the location's QR code.
 
-e.g.
+We can do so in the create_location action before instantiating a new location object.
+Take a look in the seeds.rb file for how to generate a random tag, and incorporate
+that technique in the create_location action and update the Location.new call as
+appropriate.
 
-<tt>def new_event</tt>
+<b>Step 2 - Install and configure the RQRCode Rubygem</b>
 
-<tt>end</tt>
+Now, we need to grab a Rubygem to do all the QR code generation and processing for 
+us (rather than code up a QR code compression algorithm by ourselves.) Visit 
+http://rubygems.org and search for the <tt>rqrcode</tt> rubygem.  Copy the appropriate
+string and insert into your Gemfile.  Remember to run <tt>bundle install</tt> to
+actually install the gem.
 
-<tt>def create_event</tt>
+Once you've done that, you need to create a new QR code object in the show_location
+action: <tt>@qr = RQRCode::QRCode.new("#{root_url}#{@location.tag}", size: 8)</tt>
 
-<tt>end</tt>
+The QR code will be displayed via HTML in the show_location view.  You can generate
+this HTML automatically from the @qr object by putting the following in your view:
 
-In the <tt>new_event/user/location</tt> action, you simply need to render a form
-using the Rails <tt>form_tag</tt> helper.  This form will need to redirect to the
-<tt>create_event/user/location</tt> action using the POST request method.
+<tt><%= raw @qr.as_html %></tt>
 
-In order for these actions to operate properly, you will also need to update the 
-routes file accordingly.
+Now, with the incorporated CSS in application.css, the QR code should be visible
+on show_location page.
 
-The <tt>create_event/user/location</tt> action needs to create a new object using
-the appropriate model method, and then you need to save that object to the database,
-checking to see if the save was successful.  If it was successful, then redirect
-to the show page for that particular object, otherwise, redirect to the root page.
+<b>Step 3 - Create the Visit pipeline</b>
 
-<b>Step 2 - 'Edit' Actions</b>
+The QR code for a locations encodes a URL that should display a form for a user to input
+their credentials so that the user can be associated with that particular location.
 
-In order to edit an existing object, the process is almost identical, with two exceptions:
+First, you need to create a Rails route that maps the check-in URL to a controller/action:
 
-First, in the <tt>edit_event/user/location</tt>, you first need to retrieve the particular
-object from the database before rendering the form.
+<tt>get '/:tag', to: 'visits#new_visit', as: :new_visit</tt>
 
-Second, instead of using the generic <tt>form_tag</tt> helper, you need to use the Rails
-<tt>form_for</tt> helper in order to bind the form to that specific object that you 
-retrieved from the database.
+<tt>post '/:tag', to: 'visits#create_visit', as: :create_visit</tt>
 
-So, at the end of this phase, you should have the capability to run the Rails test
-server and create and edit new objects for events, locations, and users.
+Next, you obviously need to create the Visit controller and the actions referenced above.
+
+For the view, the new_visit view should be a simple form where the user inputs their email.
+You will need to use the form_tag helper, and you'll need to include a hidden input
+field that keeps track of the location's tag for use in the follow-on create_visit action.
+
+Then, in the create_visit action, you simply need to look up the correct location by tag,
+the correct user by email, and then associate the two together:
+
+<tt>@user.visited_locations << @location</tt>
+
+Finally, update the show_user view to display whether a location has been visited
+or not for each participating location.
