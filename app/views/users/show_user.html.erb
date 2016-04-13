@@ -5,7 +5,7 @@
 
 <table>
     <tr>
-        <th>Event</th>
+        <th>Owned Event</th>
     </tr>
     
     <% @user.owned_events.each do |event| %>
@@ -14,14 +14,38 @@
         </tr>
     <% end %>
     
+    <tr>
+        <th>Participated Event</th>
+    </tr>
+    
     <% @user.participating_events.each do |event| %>
         <tr>
             <td><%= event.name %></td>
+            <td> 
+                <table>
+                    <tr>
+                        <th>Location</th>
+                        <th>Visited?</th>
+                    </tr>
+                    <% event.locations.each do |i| %>
+                        <tr>
+                            <td><%= location.name %></td>
+                            <td>
+                                <% if @user.visited_locations.include? location %>
+                                    Y
+                                <% else %>
+                                    N
+                                <% end %>
+                            </td>
+                        </tr>
+                    <% end %>
+                </table>
+            </td>
         </tr>
     <% end %>
 </table>
 
-<h3>Locations</h3>
+<h3>Owned Locations</h3>
 
 <table>
     <tr>

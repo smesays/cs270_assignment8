@@ -28,4 +28,8 @@ Rails.application.routes.draw do
   get '/users/:id/edit', to: 'users#edit_user', as: :edit_user
   post 'users/:id/update', to: 'users#update_user', as: :update_user
   delete '/users/:id', to: 'users#delete_user', as: :delete_user
+  
+  # visit routing
+  get '/:tag', to: 'visits#new_visit', as: :new_visit
+  post '/:tag', to: 'visits#create_visit', as: :create_visit
 end

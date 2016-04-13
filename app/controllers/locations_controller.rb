@@ -5,10 +5,10 @@ class LocationsController < ApplicationController
     
     # POST /locations/create
     def create_location
-
         @location = Location.new(
             name: params[:name],
             description: params[:description],
+            tag: (('A'..'Z').to_a + ('a'..'z').to_a + (0..9).to_a).shuffle[0..7].join,
             coordinates: params[:coordinates]
         )
         
@@ -27,6 +27,7 @@ class LocationsController < ApplicationController
     # GET /locations/:id
     def show_location
         @location = Location.find(params[:id])
+        @qr=RQRCode::QRCode.new("#{root_url}#{@location.tag}", size: 8)
     end
     
     # GET /locations/:id/edit
